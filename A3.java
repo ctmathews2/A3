@@ -1,31 +1,20 @@
 
 package a3;
 
-import java.util.Map; 
-
 import org.json.simple.JSONArray; 
 import org.json.simple.JSONObject; 
 import org.json.simple.parser.*; 
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
+import java.util.*;
 
-import java.util.HashMap;
-import java.util.HashSet;
-
-import java.util.Scanner;
-import java.util.Set;
-
-//CHANDLER MATHEWS
 public class A3
 {
-    // add vertex name as key, and neighbors as values in set
+
     private final Map<String, Set<String>> adjacencyLists = new HashMap<>();
-    //Store nodes of shortest path
+
     private static ArrayList<String> shortestPath = new ArrayList<String>();
 
     public void addVertex(final String name) {
@@ -51,7 +40,7 @@ public class A3
 
     public static ArrayList<String> BFS(A3 graph, String source, String destination) {
         shortestPath.clear();
-        ArrayList<String> path = new ArrayList<String>(); //Path of nodes (not shortest)
+        ArrayList<String> path = new ArrayList<String>();
 
         if (source.equals(destination)) { //If the same name return null
             path.add(source);
@@ -61,20 +50,20 @@ public class A3
         ArrayDeque<String> queue = new ArrayDeque<String>(); //Nodes to visit
         ArrayDeque<String> visited = new ArrayDeque<String>(); //Nodes visited
 
-        queue.offer(source); //Get first name
-        while (!queue.isEmpty()) { //While there are nodes to visit
+        queue.offer(source);
+        while (!queue.isEmpty()) {
             String name = queue.poll();
-            visited.offer(name); //Get next node and visit it
+            visited.offer(name);
 
-            ArrayList<String> neighborsList = graph.getNeighbors(name); //Get Neighbors of name
+            ArrayList<String> neighborsList = graph.getNeighbors(name); 
             
             for(String neighbor : neighborsList) {
-                path.add(neighbor); //For each neighbor in the list add it and the name to path
+                path.add(neighbor);
                 path.add(name);
-                if (neighbor.equals(destination)) { //If found destination, see if it is the shortest
+                if (neighbor.equals(destination)) {
                     return getShortestPath(source, destination, path);
                 } else {
-                    if (!visited.contains(neighbor)) { //Otherwise check if not yet visited neighbors
+                    if (!visited.contains(neighbor)) { 
                         queue.offer(neighbor);
                     }
                 }
@@ -85,40 +74,40 @@ public class A3
 
     private static ArrayList<String> getShortestPath(String src, String destination, ArrayList<String> path) {
 
-        int index = path.indexOf(destination); //Where the final name is in the path list
+        int index = path.indexOf(destination);
         String source = path.get(index + 1);
 
         shortestPath.add(0, destination); 
 
-        if (source.equals(src)) { //Found original name
+        if (source.equals(src)) {
             shortestPath.add(0, src);
             return shortestPath;
         } else {
-            return getShortestPath(src, source, path); //Where did the other node connect to
+            return getShortestPath(src, source, path); 
         }
     }
 
-    public String getPath(A3 graph){ //Get names of Actors, Return Path
+    public String getPath(A3 graph){ 
         Scanner reader = new Scanner(System.in);
         System.out.print("Enter Actor 1: ");
         String source = (reader.nextLine()).toLowerCase();
-        if(!graph.adjacencyLists.containsKey(source)) //Make sure actor exists
+        if(!graph.adjacencyLists.containsKey(source))
             return "No such actor.";
         System.out.print("Enter Actor 2: ");
         String dest = (reader.nextLine()).toLowerCase();
-        if(!graph.adjacencyLists.containsKey(dest))//Make sure actor exists
+        if(!graph.adjacencyLists.containsKey(dest))
             return "No such actor";
         reader.close(); 
         
-        String result = "";
-        ArrayList<String> arr = BFS(graph,source,dest); //Rreturn shorest path in array list nodes
+        String result;
+        ArrayList<String> arr = BFS(graph,source,dest);
         if(arr == null)
             return "No path exists";
-        for(String name : arr){ //Format the list
-            result += name + " --> ";
+        for(String name : arr){
+            result += name+" ";
         }
         
-        result = result.substring(0,result.length()-5); //Get rid of last arrow
+        result = result.substring(0,result.length()); 
         
         return result;
     }
@@ -173,27 +162,13 @@ public class A3
                             graph.addVertex(name2);
                         graph.addEdge(name, name2);
                     }
-                    
                 }
-               
             }
-            
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
         
-       System.out.println(graph.getPath(graph)); //Call for program
+       System.out.println(graph.getPath(graph));
         
     } 
 } 
